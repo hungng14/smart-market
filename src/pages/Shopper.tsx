@@ -132,12 +132,12 @@ const Shopper = () => {
               </h2>
               <div className="grid grid-cols-4 gap-2 aspect-square relative">
                 {/* Store Entrance */}
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1 text-secondary font-medium">
+                <div className="absolute -left-8 top-0 flex items-center gap-1 text-secondary font-medium">
                   <DoorOpen className="w-5 h-5" />
                   Entrance
                 </div>
                 {/* "You are here" marker */}
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-accent">
+                <div className="absolute -left-2 top-2 text-accent">
                   <MapPin className="w-6 h-6" />
                 </div>
                 {[
@@ -180,27 +180,95 @@ const Shopper = () => {
                 Shopping Route
               </h2>
               {selectedProducts.length > 0 ? (
-                <div className="space-y-4">
-                  <p className="text-gray-600">
-                    Follow this optimized route to collect your items efficiently:
-                  </p>
-                  <div className="grid gap-2">
-                    {optimizedRoute.map((product, index) => (
-                      <div
-                        key={product.id}
-                        className="bg-gray-50 rounded-lg p-4 flex items-center gap-4"
-                      >
-                        <span className="bg-secondary text-white w-8 h-8 rounded-full flex items-center justify-center font-medium">
-                          {index + 1}
-                        </span>
-                        <div>
-                          <h3 className="font-medium">{product.name}</h3>
-                          <p className="text-sm text-gray-600">
-                            Location: {product.location}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <p className="text-gray-600 font-medium">
+                      Step-by-step directions:
+                    </p>
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                          Starting point: Main entrance (near A1)
+                        </p>
+                      </div>
+                      {optimizedRoute.map((product, index) => (
+                        <div
+                          key={product.id}
+                          className="bg-gray-50 rounded-lg p-4"
+                        >
+                          <div className="flex items-center gap-4 mb-2">
+                            <span className="bg-secondary text-white w-8 h-8 rounded-full flex items-center justify-center font-medium">
+                              {index + 1}
+                            </span>
+                            <div>
+                              <h3 className="font-medium">{product.name}</h3>
+                              <p className="text-sm text-gray-600">
+                                Location: {product.location}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-2">
+                            {index === 0 
+                              ? `From the entrance, go to aisle ${product.location[0]} and find position ${product.location[1]}.`
+                              : `From ${optimizedRoute[index - 1].location}, move to aisle ${product.location[0]} position ${product.location[1]}.`
+                            }
                           </p>
                         </div>
+                      ))}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm text-gray-600">
+                          Return to entrance with your items.
+                        </p>
                       </div>
-                    ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-gray-600 font-medium mb-4">
+                      Route Map:
+                    </p>
+                    <div className="grid grid-cols-4 gap-2 aspect-square relative">
+                      {/* Store Entrance */}
+                      <div className="absolute -left-8 top-0 flex items-center gap-1 text-secondary font-medium">
+                        <DoorOpen className="w-5 h-5" />
+                      </div>
+                      {/* "You are here" marker */}
+                      <div className="absolute -left-2 top-2 text-accent">
+                        <MapPin className="w-6 h-6" />
+                      </div>
+                      {[
+                        ["A1", "A2", "A3", "A4"],
+                        ["B1", "B2", "B3", "B4"],
+                        ["C1", "C2", "C3", "C4"],
+                        ["D1", "D2", "D3", "D4"],
+                        ["E1", "E2", "E3", "E4"],
+                      ].flat().map((cell) => {
+                        const product = selectedStore.products.find(
+                          (p) => p.location === cell
+                        );
+                        const isSelected = product && selectedProducts.includes(product.id);
+                        const routeIndex = optimizedRoute.findIndex(p => p.location === cell);
+                        return (
+                          <div
+                            key={cell}
+                            className={`border rounded-lg p-2 text-sm ${
+                              isSelected
+                                ? "bg-secondary border-secondary"
+                                : product
+                                ? "bg-secondary/10 border-secondary"
+                                : "bg-gray-50 border-gray-200"
+                            }`}
+                          >
+                            <div className="font-medium">{cell}</div>
+                            {isSelected && (
+                              <div className="bg-white text-secondary w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">
+                                {routeIndex + 1}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               ) : (
