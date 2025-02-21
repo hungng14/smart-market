@@ -7,6 +7,8 @@ export const stores: Store[] = [
     name: "Fresh Market Central",
     address: "123 Main St, Downtown",
     image: "/placeholder.svg",
+    checkInPoints: 10,
+    vouchers: [],
     products: [
       {
         id: "1",
@@ -39,6 +41,8 @@ export const stores: Store[] = [
     name: "Super Save Market",
     address: "456 Oak Ave, Westside",
     image: "/placeholder.svg",
+    checkInPoints: 10,
+    vouchers: [],
     products: [
       {
         id: "4",
