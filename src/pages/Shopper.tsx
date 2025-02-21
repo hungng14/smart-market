@@ -1,19 +1,43 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { List, Map, Navigation, ArrowLeft } from "lucide-react";
+import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen } from "lucide-react";
 import { Store } from "@/types/store";
 import { stores } from "@/data/stores";
 import { StoreCard } from "@/components/StoreCard";
 
 const Shopper = () => {
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
   const handleStoreSelect = (store: Store) => {
     setSelectedStore(store);
+    setSelectedProducts([]);
   };
 
   const handleBack = () => {
     setSelectedStore(null);
+    setSelectedProducts([]);
+  };
+
+  const handleProductToggle = (productId: string) => {
+    setSelectedProducts(prev =>
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  // Simple optimization: Order products by aisle (A->E) and position (1->4)
+  const getOptimizedRoute = (products: string[]) => {
+    if (!selectedStore) return [];
+    return selectedStore.products
+      .filter(p => products.includes(p.id))
+      .sort((a, b) => {
+        const [aAisle, aPos] = a.location.split('');
+        const [bAisle, bPos] = b.location.split('');
+        return aAisle.localeCompare(bAisle) || aPos.localeCompare(bPos);
+      });
   };
 
   if (!selectedStore) {
@@ -43,6 +67,8 @@ const Shopper = () => {
     );
   }
 
+  const optimizedRoute = getOptimizedRoute(selectedProducts);
+
   return (
     <div className="min-h-screen bg-surface-secondary">
       <div className="container mx-auto p-4">
@@ -69,7 +95,12 @@ const Shopper = () => {
                 {selectedStore.products.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-gray-50 rounded-lg p-4 flex justify-between items-center"
+                    className={`bg-gray-50 rounded-lg p-4 flex justify-between items-center cursor-pointer ${
+                      selectedProducts.includes(product.id)
+                        ? "ring-2 ring-secondary"
+                        : ""
+                    }`}
+                    onClick={() => handleProductToggle(product.id)}
                   >
                     <div>
                       <h3 className="font-medium">{product.name}</h3>
@@ -99,7 +130,16 @@ const Shopper = () => {
                 <Map className="w-5 h-5 text-secondary" />
                 Store Map
               </h2>
-              <div className="grid grid-cols-4 gap-2 aspect-square">
+              <div className="grid grid-cols-4 gap-2 aspect-square relative">
+                {/* Store Entrance */}
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1 text-secondary font-medium">
+                  <DoorOpen className="w-5 h-5" />
+                  Entrance
+                </div>
+                {/* "You are here" marker */}
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-accent">
+                  <MapPin className="w-6 h-6" />
+                </div>
                 {[
                   ["A1", "A2", "A3", "A4"],
                   ["B1", "B2", "B3", "B4"],
@@ -110,11 +150,14 @@ const Shopper = () => {
                   const product = selectedStore.products.find(
                     (p) => p.location === cell
                   );
+                  const isSelected = product && selectedProducts.includes(product.id);
                   return (
                     <div
                       key={cell}
                       className={`border rounded-lg p-2 text-sm ${
-                        product
+                        isSelected
+                          ? "bg-secondary border-secondary"
+                          : product
                           ? "bg-secondary/10 border-secondary"
                           : "bg-gray-50 border-gray-200"
                       }`}
@@ -136,11 +179,35 @@ const Shopper = () => {
                 <Navigation className="w-5 h-5 text-secondary" />
                 Shopping Route
               </h2>
-              <div className="h-64 bg-gray-100 rounded-lg mb-4"></div>
-              <p className="text-gray-600">
-                Get the most efficient shopping route based on your list. Feature
-                coming soon!
-              </p>
+              {selectedProducts.length > 0 ? (
+                <div className="space-y-4">
+                  <p className="text-gray-600">
+                    Follow this optimized route to collect your items efficiently:
+                  </p>
+                  <div className="grid gap-2">
+                    {optimizedRoute.map((product, index) => (
+                      <div
+                        key={product.id}
+                        className="bg-gray-50 rounded-lg p-4 flex items-center gap-4"
+                      >
+                        <span className="bg-secondary text-white w-8 h-8 rounded-full flex items-center justify-center font-medium">
+                          {index + 1}
+                        </span>
+                        <div>
+                          <h3 className="font-medium">{product.name}</h3>
+                          <p className="text-sm text-gray-600">
+                            Location: {product.location}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-600">
+                  Select products to see your optimized shopping route.
+                </p>
+              )}
             </div>
           </div>
         </motion.div>
