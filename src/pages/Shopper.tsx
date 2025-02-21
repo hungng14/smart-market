@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { List, Map, Navigation, ArrowLeft } from "lucide-react";
@@ -100,10 +99,36 @@ const Shopper = () => {
                 <Map className="w-5 h-5 text-secondary" />
                 Store Map
               </h2>
-              <div className="aspect-video bg-gray-100 rounded-lg mb-4"></div>
-              <p className="text-gray-600">
-                Interactive store map with product locations coming soon.
-              </p>
+              <div className="grid grid-cols-4 gap-2 aspect-square">
+                {[
+                  ["A1", "A2", "A3", "A4"],
+                  ["B1", "B2", "B3", "B4"],
+                  ["C1", "C2", "C3", "C4"],
+                  ["D1", "D2", "D3", "D4"],
+                  ["E1", "E2", "E3", "E4"],
+                ].flat().map((cell) => {
+                  const product = selectedStore.products.find(
+                    (p) => p.location === cell
+                  );
+                  return (
+                    <div
+                      key={cell}
+                      className={`border rounded-lg p-2 text-sm ${
+                        product
+                          ? "bg-secondary/10 border-secondary"
+                          : "bg-gray-50 border-gray-200"
+                      }`}
+                    >
+                      <div className="font-medium">{cell}</div>
+                      {product && (
+                        <div className="text-xs text-gray-600 truncate">
+                          {product.name}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="col-span-1 md:col-span-2 bg-surface rounded-xl p-6 shadow-sm">
