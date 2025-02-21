@@ -1,5 +1,5 @@
 
-import { Store, History, ShoppingBag } from "lucide-react";
+import { Store, History } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export const ShopperHeader = () => {
@@ -8,7 +8,6 @@ export const ShopperHeader = () => {
   const menuItems = [
     { icon: Store, label: "Stores", path: "/shopper" },
     { icon: History, label: "History", path: "/shopper/history" },
-    { icon: ShoppingBag, label: "Products", path: "/shopper/products" },
   ];
 
   return (

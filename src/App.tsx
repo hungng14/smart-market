@@ -5,6 +5,7 @@ import Index from "@/pages/Index";
 import Shopper from "@/pages/Shopper";
 import StoreOwner from "@/pages/StoreOwner";
 import ProductHistory from "@/pages/ProductHistory";
+import PointsManagement from "@/pages/PointsManagement";
 import NotFound from "@/pages/NotFound";
 
 const App = () => {
@@ -13,8 +14,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/shopper" element={<Shopper />} />
-        <Route path="/shopper/history" element={<ProductHistory />} />
-        <Route path="/shopper/products" element={<ProductHistory />} />
+        <Route path="/shopper/history" element={<PointsManagement />} />
         <Route path="/store-owner" element={<StoreOwner />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

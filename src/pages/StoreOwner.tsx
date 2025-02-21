@@ -4,13 +4,18 @@ import {
   LayoutGrid,
   ChartBarIcon,
   PackageSearch,
-  Settings,
+  Users,
+  QrCode,
 } from "lucide-react";
 import { stores } from "@/data/stores";
+import { CheckIn } from "@/types/points";
 
 const StoreOwner = () => {
   // For demo purposes, we'll use the first store
   const store = stores[0];
+
+  // Mock data - replace with real data later
+  const mockCheckIns: CheckIn[] = [];
 
   const gridCells = [
     ["A1", "A2", "A3", "A4"],
@@ -98,14 +103,54 @@ const StoreOwner = () => {
 
           <div className="lg:col-span-2 bg-surface rounded-xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <ChartBarIcon className="w-5 h-5 text-secondary" />
-              Sales Analytics
+              <Users className="w-5 h-5 text-secondary" />
+              Customer Points Management
             </h2>
-            <div className="h-64 bg-gray-100 rounded-lg mb-4"></div>
-            <p className="text-gray-600">
-              Track your store's performance with detailed analytics and insights.
-              Coming soon!
-            </p>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-lg font-medium mb-2">Total Customers</h3>
+                  <p className="text-3xl font-bold text-secondary">0</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-lg font-medium mb-2">Total Check-ins</h3>
+                  <p className="text-3xl font-bold text-secondary">0</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-lg font-medium mb-2">Points Issued</h3>
+                  <p className="text-3xl font-bold text-secondary">0</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 bg-surface rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <QrCode className="w-5 h-5 text-secondary" />
+              Recent Check-ins
+            </h2>
+            <div className="space-y-4">
+              {mockCheckIns.length === 0 ? (
+                <p className="text-gray-600">No check-ins yet.</p>
+              ) : (
+                mockCheckIns.map((checkIn) => (
+                  <div
+                    key={checkIn.id}
+                    className="bg-gray-50 rounded-lg p-4 flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="font-medium">Customer ID: {checkIn.userId}</p>
+                      <p className="text-sm text-gray-600">
+                        {new Date(checkIn.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className="text-secondary font-medium">
+                      +{checkIn.points} points
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </motion.div>
       </div>

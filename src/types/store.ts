@@ -14,4 +14,12 @@ export interface Store {
   address: string;
   image: string;
   products: Product[];
+  checkInPoints: number;
+  vouchers: Voucher[];
+}
+
+export interface StoreStats {
+  totalCustomers: number;
+  totalCheckIns: number;
+  pointsIssued: number;
 }
