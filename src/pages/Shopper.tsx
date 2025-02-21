@@ -5,6 +5,7 @@ import { Store } from "@/types/store";
 import { stores } from "@/data/stores";
 import { StoreCard } from "@/components/StoreCard";
 import { toast } from "sonner";
+import { ShopperHeader } from "@/components/ShopperHeader";
 
 interface PurchasedProduct {
   id: string;
@@ -87,6 +88,7 @@ const Shopper = () => {
   if (showChecklist) {
     return (
       <div className="min-h-screen bg-surface-secondary">
+        <ShopperHeader />
         <div className="container mx-auto p-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -162,6 +164,7 @@ const Shopper = () => {
   if (!selectedStore) {
     return (
       <div className="min-h-screen bg-surface-secondary">
+        <ShopperHeader />
         <div className="container mx-auto p-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -190,6 +193,7 @@ const Shopper = () => {
 
   return (
     <div className="min-h-screen bg-surface-secondary">
+      <ShopperHeader />
       <div className="container mx-auto p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
