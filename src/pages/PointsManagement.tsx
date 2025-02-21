@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShopperHeader } from "@/components/ShopperHeader";
-import { Ticket, Gift, QrCode, Calendar } from "lucide-react";
+import { Ticket, Gift, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { stores } from "@/data/stores";
@@ -17,13 +17,6 @@ const mockUserPoints: UserPoints[] = stores.map(store => ({
 const mockVouchers: Voucher[] = [];
 
 const PointsManagement = () => {
-  const [selectedStore, setSelectedStore] = useState<string | null>(null);
-
-  const handleCheckIn = async (storeId: string) => {
-    // In a real app, this would scan a QR code and verify with the backend
-    toast.success("Successfully checked in! +10 points");
-  };
-
   const handleRedeemVoucher = async (voucher: Voucher) => {
     // In a real app, this would verify points and update the backend
     toast.success(`Successfully redeemed ${voucher.name}!`);
@@ -38,31 +31,6 @@ const PointsManagement = () => {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto space-y-6"
         >
-          <div className="bg-surface rounded-xl p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <QrCode className="w-5 h-5 text-secondary" />
-              Store Check-in
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {stores.map((store) => (
-                <div
-                  key={store.id}
-                  className="bg-gray-50 rounded-lg p-4 space-y-2"
-                >
-                  <h3 className="font-medium">{store.name}</h3>
-                  <p className="text-sm text-gray-600">{store.address}</p>
-                  <button
-                    onClick={() => handleCheckIn(store.id)}
-                    className="bg-secondary text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2"
-                  >
-                    <QrCode className="w-4 h-4" />
-                    Scan to Check-in
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-surface rounded-xl p-6 shadow-sm">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
