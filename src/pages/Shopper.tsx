@@ -1,14 +1,23 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen } from "lucide-react";
+import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen, CheckSquare, DollarSign } from "lucide-react";
 import { Store } from "@/types/store";
 import { stores } from "@/data/stores";
 import { StoreCard } from "@/components/StoreCard";
+import { toast } from "sonner";
+
+interface PurchasedProduct {
+  id: string;
+  name: string;
+  price: number;
+  checked: boolean;
+}
 
 const Shopper = () => {
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [purchasedProducts, setPurchasedProducts] = useState<PurchasedProduct[]>([]);
+  const [showChecklist, setShowChecklist] = useState(false);
 
   const handleStoreSelect = (store: Store) => {
     setSelectedStore(store);
@@ -16,8 +25,12 @@ const Shopper = () => {
   };
 
   const handleBack = () => {
-    setSelectedStore(null);
-    setSelectedProducts([]);
+    if (showChecklist) {
+      setShowChecklist(false);
+    } else {
+      setSelectedStore(null);
+      setSelectedProducts([]);
+    }
   };
 
   const handleProductToggle = (productId: string) => {
@@ -28,7 +41,38 @@ const Shopper = () => {
     );
   };
 
-  // Simple optimization: Order products by aisle (A->E) and position (1->4)
+  const handleCheckout = () => {
+    if (!selectedStore || selectedProducts.length === 0) return;
+    
+    const newPurchasedProducts = selectedProducts.map(id => {
+      const product = selectedStore.products.find(p => p.id === id);
+      if (!product) return null;
+      return {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        checked: false,
+      };
+    }).filter((p): p is PurchasedProduct => p !== null);
+
+    setPurchasedProducts(prev => [...prev, ...newPurchasedProducts]);
+    setShowChecklist(true);
+    toast.success("Checkout successful! Your items have been added to the checklist.");
+  };
+
+  const handleToggleChecked = (productId: string) => {
+    setPurchasedProducts(prev =>
+      prev.map(product =>
+        product.id === productId
+          ? { ...product, checked: !product.checked }
+          : product
+      )
+    );
+  };
+
+  const totalSpent = purchasedProducts.reduce((sum, product) => sum + product.price, 0);
+  const remainingItems = purchasedProducts.filter(p => !p.checked).length;
+
   const getOptimizedRoute = (products: string[]) => {
     if (!selectedStore) return [];
     return selectedStore.products
@@ -39,6 +83,81 @@ const Shopper = () => {
         return aAisle.localeCompare(bAisle) || aPos.localeCompare(bPos);
       });
   };
+
+  if (showChecklist) {
+    return (
+      <div className="min-h-screen bg-surface-secondary">
+        <div className="container mx-auto p-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-4xl mx-auto"
+          >
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Shopping
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-surface rounded-xl p-6 shadow-sm">
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <CheckSquare className="w-5 h-5 text-secondary" />
+                  Shopping Checklist
+                </h2>
+                <div className="space-y-4">
+                  {purchasedProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className={`bg-gray-50 rounded-lg p-4 flex justify-between items-center cursor-pointer ${
+                        product.checked ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleToggleChecked(product.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center ${
+                          product.checked ? "bg-secondary border-secondary" : "border-gray-300"
+                        }`}>
+                          {product.checked && (
+                            <CheckSquare className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                        <span className={product.checked ? "line-through text-gray-500" : ""}>
+                          {product.name}
+                        </span>
+                      </div>
+                      <span className="font-medium">${product.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-surface rounded-xl p-6 shadow-sm">
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-secondary" />
+                  Shopping Summary
+                </h2>
+                <div className="space-y-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-gray-600">Total Spent</span>
+                      <span className="font-semibold text-xl">${totalSpent.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Remaining Items</span>
+                      <span className="font-medium">{remainingItems} items</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   if (!selectedStore) {
     return (
@@ -131,12 +250,10 @@ const Shopper = () => {
                 Store Map
               </h2>
               <div className="grid grid-cols-4 gap-2 aspect-square relative">
-                {/* Store Entrance */}
                 <div className="absolute -left-8 top-0 flex items-center gap-1 text-secondary font-medium">
                   <DoorOpen className="w-5 h-5" />
                   Entrance
                 </div>
-                {/* "You are here" marker */}
                 <div className="absolute -left-2 top-2 text-accent">
                   <MapPin className="w-6 h-6" />
                 </div>
@@ -175,10 +292,21 @@ const Shopper = () => {
             </div>
 
             <div className="col-span-1 md:col-span-2 bg-surface rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Navigation className="w-5 h-5 text-secondary" />
-                Shopping Route
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Navigation className="w-5 h-5 text-secondary" />
+                  Shopping Route
+                </h2>
+                {selectedProducts.length > 0 && (
+                  <button
+                    onClick={handleCheckout}
+                    className="bg-secondary hover:bg-secondary-hover text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                  >
+                    <DollarSign className="w-5 h-5" />
+                    Checkout
+                  </button>
+                )}
+              </div>
               {selectedProducts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
@@ -228,11 +356,9 @@ const Shopper = () => {
                       Route Map:
                     </p>
                     <div className="grid grid-cols-4 gap-2 aspect-square relative">
-                      {/* Store Entrance */}
                       <div className="absolute -left-8 top-0 flex items-center gap-1 text-secondary font-medium">
                         <DoorOpen className="w-5 h-5" />
                       </div>
-                      {/* "You are here" marker */}
                       <div className="absolute -left-2 top-2 text-accent">
                         <MapPin className="w-6 h-6" />
                       </div>
