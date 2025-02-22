@@ -17,6 +17,7 @@ import { Store } from "@/types/store";
 import { stores } from "@/data/stores";
 import { ShopperHeader } from "@/components/ShopperHeader";
 import { toast } from "sonner";
+import { booths } from "@/data/booth"; // Import booths data
 
 interface PurchasedProduct {
   id: string;
@@ -371,46 +372,15 @@ const StoreDetail = () => {
                 <div className="absolute -left-2 top-2 text-accent">
                   <MapPin className="w-6 h-6" />
                 </div>
-                {[
-                  [
-                    { name: 'A1', boothImage: 'https://images.unsplash.com/photo-1609780447631-05b93e5a88ea?w=500&auto=format' },
-                    { name: 'A2', boothImage: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=500&auto=format' },
-                    { name: 'A3', boothImage: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format' },
-                    { name: 'A4', boothImage: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=500&auto=format' }
-                  ],
-                  [
-                    { name: 'B1', boothImage: 'https://images.unsplash.com/photo-1543168256-418811576931?w=500&auto=format' },
-                    { name: 'B2', boothImage: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=500&auto=format' },
-                    { name: 'B3', boothImage: 'https://images.unsplash.com/photo-1604742763104-86a0cf0aa0e4?w=500&auto=format' },
-                    { name: 'B4', boothImage: 'https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?w=500&auto=format' }
-                  ],
-                  [
-                    { name: 'C1', boothImage: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=500&auto=format' },
-                    { name: 'C2', boothImage: 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500&auto=format' },
-                    { name: 'C3', boothImage: 'https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=500&auto=format' },
-                    { name: 'C4', boothImage: 'https://images.unsplash.com/photo-1571204829887-3b8d69e23d93?w=500&auto=format' }
-                  ],
-                  [
-                    { name: 'D1', boothImage: 'https://images.unsplash.com/photo-1584473457409-ae5c91d3c004?w=500&auto=format' },
-                    { name: 'D2', boothImage: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=500&auto=format' },
-                    { name: 'D3', boothImage: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=500&auto=format' },
-                    { name: 'D4', boothImage: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format' }
-                  ],
-                  [
-                    { name: 'E1', boothImage: 'https://images.unsplash.com/photo-1598030304671-5aa1d6f21128?w=500&auto=format' },
-                    { name: 'E2', boothImage: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format' },
-                    { name: 'E3', boothImage: 'https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=500&auto=format' },
-                    { name: 'E4', boothImage: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?w=500&auto=format' }
-                  ]
-                ].flat().map((cell) => {
+                {booths.map((row) => row.map((booth) => {
                   const product = selectedStore.products.find(
-                    (p) => p.booth === cell.name
+                    (p) => p.booth === booth.name
                   );
                   const isSelected =
                     product && selectedProducts.includes(product.id);
                   return (
                     <div
-                      key={cell.name}
+                      key={booth.name}
                       className={`border rounded-lg p-2 text-sm relative overflow-hidden group ${
                         isSelected
                           ? "ring-2 ring-secondary"
@@ -420,14 +390,14 @@ const StoreDetail = () => {
                       }`}
                     >
                       <img 
-                        src={cell.boothImage} 
-                        alt={`Booth ${cell.name}`}
+                        src={booth.boothImage} 
+                        alt={`Booth ${booth.name}`}
                         className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-75 transition-opacity"
                       />
                       <div className="relative z-10 bg-white/80 rounded p-1">
-                        <div className="font-medium text-secondary">{cell.name}</div>
+                        <div className="font-medium text-secondary">{booth.name}</div>
                         {selectedStore.products
-                          .filter(p => p.booth === cell.name)
+                          .filter(p => p.booth === booth.name)
                           .map(p => (
                             <div key={p.id} className="text-xs text-gray-800 truncate">
                               {p.name}
@@ -437,7 +407,7 @@ const StoreDetail = () => {
                       </div>
                     </div>
                   );
-                })}
+                }))}
               </div>
             </div>
 
@@ -509,49 +479,18 @@ const StoreDetail = () => {
                       <div className="absolute -left-2 top-2 text-accent">
                         <MapPin className="w-6 h-6" />
                       </div>
-                      {[
-                        [
-                          { name: 'A1', boothImage: 'https://images.unsplash.com/photo-1609780447631-05b93e5a88ea?w=500&auto=format' },
-                          { name: 'A2', boothImage: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=500&auto=format' },
-                          { name: 'A3', boothImage: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format' },
-                          { name: 'A4', boothImage: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=500&auto=format' }
-                        ],
-                        [
-                          { name: 'B1', boothImage: 'https://images.unsplash.com/photo-1543168256-418811576931?w=500&auto=format' },
-                          { name: 'B2', boothImage: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=500&auto=format' },
-                          { name: 'B3', boothImage: 'https://images.unsplash.com/photo-1604742763104-86a0cf0aa0e4?w=500&auto=format' },
-                          { name: 'B4', boothImage: 'https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?w=500&auto=format' }
-                        ],
-                        [
-                          { name: 'C1', boothImage: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=500&auto=format' },
-                          { name: 'C2', boothImage: 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500&auto=format' },
-                          { name: 'C3', boothImage: 'https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=500&auto=format' },
-                          { name: 'C4', boothImage: 'https://images.unsplash.com/photo-1571204829887-3b8d69e23d93?w=500&auto=format' }
-                        ],
-                        [
-                          { name: 'D1', boothImage: 'https://images.unsplash.com/photo-1584473457409-ae5c91d3c004?w=500&auto=format' },
-                          { name: 'D2', boothImage: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=500&auto=format' },
-                          { name: 'D3', boothImage: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=500&auto=format' },
-                          { name: 'D4', boothImage: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format' }
-                        ],
-                        [
-                          { name: 'E1', boothImage: 'https://images.unsplash.com/photo-1598030304671-5aa1d6f21128?w=500&auto=format' },
-                          { name: 'E2', boothImage: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format' },
-                          { name: 'E3', boothImage: 'https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=500&auto=format' },
-                          { name: 'E4', boothImage: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?w=500&auto=format' }
-                        ]
-                      ].flat().map((cell) => {
+                      {booths.map((row) => row.map((booth) => {
                         const product = selectedStore.products.find(
-                          (p) => p.booth === cell.name,
+                          (p) => p.booth === booth.name,
                         );
                         const isSelected =
                           product && selectedProducts.includes(product.id);
                         const routeIndex = optimizedRoute.findIndex(
-                          (p) => p.booth === cell.name,
+                          (p) => p.booth === booth.name,
                         );
                         return (
                           <div
-                            key={cell.name}
+                            key={booth.name}
                             className={`border rounded-lg p-2 text-sm relative overflow-hidden ${
                               isSelected
                                 ? "bg-secondary border-secondary"
@@ -561,12 +500,12 @@ const StoreDetail = () => {
                             }`}
                           >
                             <img 
-                              src={cell.boothImage} 
-                              alt={`Booth ${cell.name}`}
+                              src={booth.boothImage} 
+                              alt={`Booth ${booth.name}`}
                               className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-75 transition-opacity"
                             />
                             <div className="relative z-10 bg-white/80 rounded p-1">
-                              <div className="font-medium text-secondary">{cell.name}</div>
+                              <div className="font-medium text-secondary">{booth.name}</div>
                               {isSelected && (
                                 <div className="bg-white text-secondary w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">
                                   {routeIndex + 1}
@@ -575,7 +514,7 @@ const StoreDetail = () => {
                             </div>
                           </div>
                         );
-                      })}
+                      }))}
                     </div>
                   </div>
                 </div>
