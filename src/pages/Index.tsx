@@ -2,24 +2,10 @@
 import { useNavigate } from "react-router-dom";
 import { Store, ShoppingCart } from "lucide-react";
 import { motion } from "framer-motion";
-import { supabase } from "@/lib/supabase";
-import { toast } from "sonner";
 import { RoleCard } from "@/components/RoleCard";
 
 const Index = () => {
   const navigate = useNavigate();
-  const handleNavigation = (path: string) => {
-    // Get user session from Supabase
-    const session = supabase.auth.getSession();
-    if (!session) {
-      // If no session, redirect to login
-      navigate('/login');
-      toast.error('Please login first');
-    } else {
-      // If authenticated, proceed to destination
-      navigate(path);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-surface-secondary">
@@ -47,13 +33,13 @@ const Index = () => {
             title="Store Owner"
             description="Manage your store layout, track inventory, and analyze sales performance"
             icon={<Store className="w-6 h-6" />}
-            onClick={() => handleNavigation("/owner")}
+            onClick={() => navigate("/owner")}
           />
           <RoleCard
             title="Shopper"
             description="Create shopping lists, find products easily, and get optimized routes"
             icon={<ShoppingCart className="w-6 h-6" />}
-            onClick={() => handleNavigation("/shopper")}
+            onClick={() => navigate("/shopper")}
           />
         </motion.div>
       </div>
