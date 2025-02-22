@@ -1,4 +1,3 @@
-
 import { Voucher } from "./points";
 
 export interface Product {
@@ -6,6 +5,7 @@ export interface Product {
   name: string;
   price: number;
   booth: string;
+  boothImage: string;
   store_owner_id?: string;
 }
 

@@ -388,20 +388,32 @@ const StoreDetail = () => {
                     return (
                       <div
                         key={cell}
-                        className={`border rounded-lg p-2 text-sm ${
+                        className={`border rounded-lg p-2 text-sm relative overflow-hidden group ${
                           isSelected
-                            ? "bg-secondary border-secondary"
+                            ? "ring-2 ring-secondary"
                             : product
-                              ? "bg-secondary/10 border-secondary"
+                              ? "ring-1 ring-secondary/30"
                               : "bg-gray-50 border-gray-200"
                         }`}
                       >
-                        <div className="font-medium">{cell}</div>
                         {product && (
-                          <div className="text-xs text-gray-600 truncate">
-                            {product.name}
-                          </div>
+                          <img 
+                            src={product.boothImage} 
+                            alt={`Booth ${cell}`}
+                            className="absolute inset-0 w-full h-full object-cover z-0 opacity-50 group-hover:opacity-75 transition-opacity"
+                          />
                         )}
+                        <div className="relative z-10 bg-white/80 rounded p-1">
+                          <div className="font-medium text-secondary">{cell}</div>
+                          {selectedStore.products
+                            .filter(p => p.booth === cell)
+                            .map(p => (
+                              <div key={p.id} className="text-xs text-gray-800 truncate">
+                                {p.name}
+                              </div>
+                            ))
+                          }
+                        </div>
                       </div>
                     );
                   })}
