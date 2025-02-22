@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { ShopperHeader } from "@/components/ShopperHeader";
 import { Ticket, Gift, Calendar } from "lucide-react";
 import { format } from "date-fns";
@@ -126,7 +127,12 @@ const PointsManagement = () => {
                     className="bg-gray-50 rounded-lg p-4 flex justify-between items-center"
                   >
                     <div>
-                      <h3 className="font-medium">{store?.name}</h3>
+                      <Link 
+                        to={`/shopper?store=${store?.id}`} 
+                        className="font-medium hover:text-secondary transition-colors"
+                      >
+                        {store?.name}
+                      </Link>
                       <p className="text-sm text-gray-600">
                         {format(checkIn.created_at, "MMM d, yyyy h:mm a")}
                       </p>
