@@ -1,10 +1,20 @@
 
 export interface CheckIn {
   id: string;
-  userId: string;
-  storeId: string;
-  timestamp: Date;
-  points: number;
+  user_id: string;
+  store_id: string;
+  created_at: Date;
+  user: {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+  };
+  store: {
+    id: string;
+    name: string;
+    banner_url: string;
+  };
 }
 
 export interface Voucher {

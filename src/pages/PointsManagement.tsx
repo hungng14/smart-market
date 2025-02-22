@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShopperHeader } from "@/components/ShopperHeader";
@@ -9,7 +8,30 @@ import { stores } from "@/data/stores";
 import { CheckIn, UserPoints, Voucher } from "@/types/points";
 
 // Mock data - replace with real data later
-const mockCheckIns: CheckIn[] = [];
+const mockCheckIns: CheckIn[] = [
+  {
+    id: "1",
+    user_id: "2",
+    store_id: "1",
+    created_at: new Date("2024-02-22T10:30:00"),
+    user: {
+      id: "2",
+      name: "John Doe",
+    },
+    points: 100,
+  },
+  {
+    id: "2",
+    user_id: "2",
+    store_id: "2",
+    created_at: new Date("2024-02-23T14:00:00"),
+    user: {
+      id: "2",
+      name: "John Doe",
+    },
+    points: 50,
+  },
+];
 const mockUserPoints: UserPoints[] = stores.map(store => ({
   storeId: store.id,
   points: 0,
@@ -106,7 +128,7 @@ const PointsManagement = () => {
                     <div>
                       <h3 className="font-medium">{store?.name}</h3>
                       <p className="text-sm text-gray-600">
-                        {format(checkIn.timestamp, "MMM d, yyyy h:mm a")}
+                        {format(checkIn.created_at, "MMM d, yyyy h:mm a")}
                       </p>
                     </div>
                     <span className="text-secondary font-medium">
