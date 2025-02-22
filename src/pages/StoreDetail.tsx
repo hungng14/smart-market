@@ -342,6 +342,7 @@ const StoreDetail = () => {
                       onClick={async () => {
                         if (purchasedProducts.some((p) => p.checked)) {
                           try {
+                            setLoading(true);
                             const checkedProducts = purchasedProducts.filter(
                               (p) => p.checked,
                             );
@@ -387,6 +388,8 @@ const StoreDetail = () => {
                             toast.error(
                               "Failed to save your order. Please try again.",
                             );
+                          } finally {
+                            setLoading(false);
                           }
                         } else {
                           toast.error(
@@ -394,13 +397,21 @@ const StoreDetail = () => {
                           );
                         }
                       }}
+                      disabled={loading}
                       className={`px-6 py-3 rounded-lg font-medium ${
                         purchasedProducts.some((p) => p.checked)
                           ? "bg-secondary text-white hover:bg-secondary/90"
                           : "bg-gray-200 text-gray-500 cursor-not-allowed"
                       }`}
                     >
-                      Confirm Purchase
+                      {loading ? (
+                        <div className="flex items-center gap-2">
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Confirming...
+                        </div>
+                      ) : (
+                        "Confirm Purchase"
+                      )}
                     </button>
                   </div>
                 </div>
