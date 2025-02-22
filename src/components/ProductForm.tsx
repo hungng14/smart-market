@@ -37,8 +37,6 @@ export const ProductForm = ({ onSubmit, initialProduct, availableBooths }: Produ
         name,
         price: parseFloat(price),
         booth,
-        category: "default",
-        inStock: true,
         store_owner_id: "123e4567-e89b-12d3-a456-426614174000" // Mock store owner ID
       });
       toast.success(`Product ${initialProduct ? "updated" : "added"} successfully`);
@@ -48,6 +46,7 @@ export const ProductForm = ({ onSubmit, initialProduct, availableBooths }: Produ
         setBooth("");
       }
     } catch (error) {
+      console.error('Error saving product:', error);
       toast.error("Failed to save product");
     } finally {
       setIsSubmitting(false);

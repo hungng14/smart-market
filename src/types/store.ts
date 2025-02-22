@@ -4,9 +4,7 @@ import { Voucher } from "./points";
 export interface Product {
   id: string;
   name: string;
-  category: string;
   price: number;
-  inStock: boolean;
   booth: string;
   store_owner_id?: string;
 }
