@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useParams, useNavigate } from "react-router-dom";
 import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen, CheckSquare, DollarSign } from "lucide-react";
 import { Store } from "@/types/store";
 import { stores } from "@/data/stores";
@@ -16,14 +17,30 @@ interface PurchasedProduct {
 }
 
 const Shopper = () => {
+  const { storeId } = useParams();
+  const navigate = useNavigate();
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+
+  useEffect(() => {
+    if (storeId) {
+      const store = stores.find(s => s.id === storeId);
+      if (store) {
+        setSelectedStore(store);
+        setSelectedProducts([]);
+      } else {
+        navigate('/shopper');
+      }
+    } else {
+      setSelectedStore(null);
+      setSelectedProducts([]);
+    }
+  }, [storeId, navigate]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [purchasedProducts, setPurchasedProducts] = useState<PurchasedProduct[]>([]);
   const [showChecklist, setShowChecklist] = useState(false);
 
   const handleStoreSelect = (store: Store) => {
-    setSelectedStore(store);
-    setSelectedProducts([]);
+    navigate(`/shopper/store/${store.id}`);
   };
 
   const handleBack = () => {
