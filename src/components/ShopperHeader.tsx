@@ -4,15 +4,11 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 
 export const ShopperHeader = () => {
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-  console.log("userData", userData);
 
-  const getInitials = (userInfo?: {
-    first_name?: string;
-    last_name?: string;
-  }) => {
-    const fN = userInfo?.first_name?.[0] || "";
-    const lN = userInfo?.last_name?.[0] || "";
-    return fN + lN;
+  const getInitials = (name?: string) => {
+    if (!name) return "";
+    const parts = name.split(" ");
+    return parts.map(part => part[0]?.toUpperCase() || "").join("");
   };
   const location = useLocation();
 
@@ -40,10 +36,13 @@ export const ShopperHeader = () => {
               {item.label}
             </Link>
           ))}
-          {console.log("userData", userData)}
-          {userData?.first_name ? (
-            <Avatar className="ml-auto">{getInitials(userData)}</Avatar>
-          ) : null}
+          {userData?.name && (
+            <Avatar className="ml-auto">
+              <AvatarFallback className="bg-secondary text-white">
+                {getInitials(userData.name)}
+              </AvatarFallback>
+            </Avatar>
+          )}
         </nav>
       </div>
     </header>
