@@ -21,6 +21,7 @@ import { ProductForm } from "@/components/ProductForm";
 import { Product } from "@/types/store";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 const StoreOwner = () => {
   const store = stores[0];
