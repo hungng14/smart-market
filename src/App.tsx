@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import Index from "@/pages/Index";
 import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 import Shopper from "@/pages/Shopper";
 import StoreOwner from "@/pages/StoreOwner";
 import ProductHistory from "@/pages/ProductHistory";
@@ -15,6 +16,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/shopper" element={<Shopper />} />
         <Route path="/shopper/points" element={<PointsManagement />} />
         <Route path="/shopper/history" element={<ProductHistory />} />
