@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import {
   LayoutGrid,
@@ -6,13 +5,27 @@ import {
   PackageSearch,
   Users,
   QrCode,
+  Plus,
 } from "lucide-react";
 import { stores } from "@/data/stores";
 import { CheckIn } from "@/types/points";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ProductForm } from "@/components/ProductForm";
+import { Product } from "@/types/store";
+import { useState } from "react";
 
 const StoreOwner = () => {
   // For demo purposes, we'll use the first store
   const store = stores[0];
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   // Mock data - replace with real data later
   const mockCheckIns: CheckIn[] = [];
@@ -25,8 +38,22 @@ const StoreOwner = () => {
     ["E1", "E2", "E3", "E4"],
   ];
 
+  const availableLocations = gridCells.flat();
+
   const getProductForLocation = (location: string) => {
     return store.products.find((product) => product.location === location);
+  };
+
+  const handleAddProduct = async (product: Omit<Product, "id">) => {
+    // This will be replaced with Supabase integration
+    console.log("Adding product:", product);
+    setShowAddProduct(false);
+  };
+
+  const handleUpdateProduct = async (product: Omit<Product, "id">) => {
+    // This will be replaced with Supabase integration
+    console.log("Updating product:", product);
+    setEditingProduct(null);
   };
 
   return (
@@ -50,9 +77,10 @@ const StoreOwner = () => {
                     key={cell}
                     className={`border rounded-lg p-2 text-sm ${
                       product
-                        ? "bg-secondary/10 border-secondary"
+                        ? "bg-secondary/10 border-secondary cursor-pointer"
                         : "bg-gray-50 border-gray-200"
                     }`}
+                    onClick={() => product && setEditingProduct(product)}
                   >
                     <div className="font-medium">{cell}</div>
                     {product && (
@@ -67,15 +95,36 @@ const StoreOwner = () => {
           </div>
 
           <div className="bg-surface rounded-xl p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <PackageSearch className="w-5 h-5 text-secondary" />
-              Products ({store.products.length})
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <PackageSearch className="w-5 h-5 text-secondary" />
+                Products ({store.products.length})
+              </h2>
+              <Dialog open={showAddProduct} onOpenChange={setShowAddProduct}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Product
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Product</DialogTitle>
+                  </DialogHeader>
+                  <ProductForm
+                    onSubmit={handleAddProduct}
+                    availableLocations={availableLocations}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
+
             <div className="space-y-4">
               {store.products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-gray-50 rounded-lg p-4 flex justify-between items-center"
+                  className="bg-gray-50 rounded-lg p-4 flex justify-between items-center hover:bg-gray-100 transition-colors cursor-pointer"
+                  onClick={() => setEditingProduct(product)}
                 >
                   <div>
                     <h3 className="font-medium">{product.name}</h3>
@@ -153,6 +202,22 @@ const StoreOwner = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Edit Product Dialog */}
+        <Dialog open={!!editingProduct} onOpenChange={() => setEditingProduct(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Product</DialogTitle>
+            </DialogHeader>
+            {editingProduct && (
+              <ProductForm
+                onSubmit={handleUpdateProduct}
+                initialProduct={editingProduct}
+                availableLocations={availableLocations}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
