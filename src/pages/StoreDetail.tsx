@@ -639,7 +639,7 @@ const StoreDetail = () => {
                           </div>
                           <p className="text-sm text-gray-600 mt-2">
                             {index === 0
-                              ? `From the entrance, go to ${booth} located at booth ${booths.find((b) => b.name === booth)?.position[1]} of counter ${booths.find((b) => b.name === booth)?.position[0]}. Here you'll find ${products.map((p) => p.name).join(", ")}.`
+                              ? `From the entrance, go to ${booth} located at booth ${booths.find((b) => b.name === booth)?.position[1]} of counter ${booths.find((b) => b.name === booth)?.position[0].charCodeAt(0) - 64}. Here you'll find ${products.map((p) => p.name).join(", ")}.`
                               : `From ${
                                   Object.keys(
                                     optimizedRoute.reduce(
@@ -656,7 +656,7 @@ const StoreDetail = () => {
                                       >,
                                     ),
                                   )[index - 1]
-                                }, move to ${booth} at booth ${booths.find((b) => b.name === booth)?.position[1]} of counter ${booths.find((b) => b.name === booth)?.position[0]}. Look for ${products.map((p) => p.name).join(", ")}.`}
+                                }, move to ${booth} at booth ${booths.find((b) => b.name === booth)?.position[1]} of counter ${booths.find((b) => b.name === booth)?.position[0].charCodeAt(0) - 64}. Look for ${products.map((p) => p.name).join(", ")}.`}
                           </p>
                         </div>
                       ))}
