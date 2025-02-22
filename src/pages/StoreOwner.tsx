@@ -24,6 +24,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
+import { OwnerHeader } from "@/components/OwnerHeader";
+
 const StoreOwner = () => {
   const [store, setStore] = useState<any>(null);
   const [showAddProduct, setShowAddProduct] = useState(false);
@@ -120,6 +122,7 @@ const StoreOwner = () => {
 
   return (
     <div className="min-h-screen bg-surface-secondary">
+      <OwnerHeader />
       <div className="container mx-auto p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

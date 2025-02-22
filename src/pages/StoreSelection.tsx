@@ -15,6 +15,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { OwnerHeader } from "@/components/OwnerHeader";
+
 const StoreSelection = () => {
   const navigate = useNavigate();
   const [stores, setStores] = useState<Store[]>([]);
@@ -89,6 +91,7 @@ const handleCreateStore = async () => {
 
   return (
     <div className="min-h-screen bg-surface-secondary">
+      <OwnerHeader />
       <div className="container mx-auto p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
