@@ -4,6 +4,7 @@ export interface CheckIn {
   user_id: string;
   store_id: string;
   created_at: Date;
+  points?: number;
   user: {
     id: string;
     email: string;
@@ -13,7 +14,7 @@ export interface CheckIn {
   store: {
     id: string;
     name: string;
-    banner_url: string;
+    banner_url?: string;
   };
 }
 

@@ -7,13 +7,14 @@ export interface Product {
   booth: string;
   boothImage: string;
   store_owner_id?: string;
+  inStock?: boolean;
 }
 
 export interface Store {
   id: string;
   name: string;
   address: string;
-  image: string;
+  banner_url: string;
   products: Product[];
   checkInPoints: number;
   vouchers: Voucher[];

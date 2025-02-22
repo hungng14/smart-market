@@ -9,6 +9,7 @@ import StoreOwner from "@/pages/StoreOwner";
 import ProductHistory from "@/pages/ProductHistory";
 import PointsManagement from "@/pages/PointsManagement";
 import NotFound from "@/pages/NotFound";
+import StoreDetail from "@/pages/StoreDetail";
 
 const App = () => {
   return (
@@ -18,7 +19,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/shopper" element={<Shopper />} />
-        <Route path="/shopper/store/:storeId" element={<Shopper />} />
+        <Route path="/shopper/store/:storeId" element={<StoreDetail />} />
         <Route path="/shopper/points" element={<PointsManagement />} />
         <Route path="/shopper/history" element={<ProductHistory />} />
         <Route path="/owner" element={<StoreOwner />} />

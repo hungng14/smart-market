@@ -37,7 +37,7 @@ export const StoreCard = ({ store, onClick }: StoreCardProps) => {
       >
         <div className="aspect-video bg-gray-100">
           <img
-            src={store.image}
+            src={store.banner_url}
             alt={store.name}
             className="w-full h-full object-cover"
           />
@@ -58,7 +58,7 @@ export const StoreCard = ({ store, onClick }: StoreCardProps) => {
             {store.address}
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            {store.products.length} products available
+            {store.products?.length || 0} products available
           </p>
         </div>
       </motion.div>

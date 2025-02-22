@@ -27,7 +27,7 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="flex flex-col md:flex-row gap-6 justify-center items-center max-w-4xl mx-auto"
+          className="flex flex-col md:flex-row gap-6 justify-center items-center max-w-7xl mx-auto"
         >
           <RoleCard
             title="Store Owner"
