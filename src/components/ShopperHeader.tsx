@@ -1,8 +1,14 @@
 
 import { Store, History, Ticket } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 export const ShopperHeader = () => {
+  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+  const getInitials = (name: string) => {
+    const names = name?.split(" ") || [];
+    return names.map(n => n[0]?.toUpperCase()).join("");
+  };
   const location = useLocation();
 
   const menuItems = [
@@ -29,6 +35,13 @@ export const ShopperHeader = () => {
               {item.label}
             </Link>
           ))}
+          {userData?.name && (
+            <Avatar className="ml-auto">
+              <AvatarFallback className="bg-secondary text-white">
+                {getInitials(userData.name)}
+              </AvatarFallback>
+            </Avatar>
+          )}
         </nav>
       </div>
     </header>
