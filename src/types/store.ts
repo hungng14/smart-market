@@ -7,7 +7,8 @@ export interface Product {
   category: string;
   price: number;
   inStock: boolean;
-  location: string;
+  booth: string;
+  store_owner_id?: string;
 }
 
 export interface Store {

@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import {
   LayoutGrid,
@@ -40,7 +41,7 @@ const StoreOwner = () => {
     ["E1", "E2", "E3", "E4"],
   ];
 
-  const availableLocations = gridCells.flat();
+  const availableBooths = gridCells.flat();
 
   useEffect(() => {
     fetchProducts();
@@ -59,8 +60,8 @@ const StoreOwner = () => {
     setProducts(data || []);
   };
 
-  const getProductForLocation = (location: string) => {
-    return products.find((product) => product.location === location);
+  const getProductForBooth = (booth: string) => {
+    return products.find((product) => product.booth === booth);
   };
 
   const handleAddProduct = async (product: Omit<Product, "id">) => {
@@ -81,9 +82,12 @@ const StoreOwner = () => {
   const handleUpdateProduct = async (product: Omit<Product, "id">) => {
     if (!editingProduct) return;
 
+    // Remove store_owner_id from the update
+    const { store_owner_id, ...updateData } = product;
+
     const { error } = await supabase
       .from('products')
-      .update(product)
+      .update(updateData)
       .eq('id', editingProduct.id);
 
     if (error) {
@@ -111,7 +115,7 @@ const StoreOwner = () => {
             </h2>
             <div className="grid grid-cols-4 gap-2 aspect-square">
               {gridCells.flat().map((cell) => {
-                const product = getProductForLocation(cell);
+                const product = getProductForBooth(cell);
                 return (
                   <div
                     key={cell}
@@ -155,7 +159,7 @@ const StoreOwner = () => {
                   </DialogHeader>
                   <ProductForm
                     onSubmit={handleAddProduct}
-                    availableLocations={availableLocations}
+                    availableBooths={availableBooths}
                   />
                 </DialogContent>
               </Dialog>
@@ -174,7 +178,7 @@ const StoreOwner = () => {
                       Category: {product.category}
                     </p>
                     <p className="text-sm text-gray-600">
-                      Location: {product.location}
+                      Booth: {product.booth}
                     </p>
                   </div>
                   <div className="text-right">
@@ -192,74 +196,22 @@ const StoreOwner = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-2 bg-surface rounded-xl p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-secondary" />
-              Customer Points Management
-            </h2>
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-lg font-medium mb-2">Total Customers</h3>
-                  <p className="text-3xl font-bold text-secondary">0</p>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-lg font-medium mb-2">Total Check-ins</h3>
-                  <p className="text-3xl font-bold text-secondary">0</p>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-lg font-medium mb-2">Points Issued</h3>
-                  <p className="text-3xl font-bold text-secondary">0</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-2 bg-surface rounded-xl p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <QrCode className="w-5 h-5 text-secondary" />
-              Recent Check-ins
-            </h2>
-            <div className="space-y-4">
-              {mockCheckIns.length === 0 ? (
-                <p className="text-gray-600">No check-ins yet.</p>
-              ) : (
-                mockCheckIns.map((checkIn) => (
-                  <div
-                    key={checkIn.id}
-                    className="bg-gray-50 rounded-lg p-4 flex justify-between items-center"
-                  >
-                    <div>
-                      <p className="font-medium">Customer ID: {checkIn.userId}</p>
-                      <p className="text-sm text-gray-600">
-                        {new Date(checkIn.timestamp).toLocaleString()}
-                      </p>
-                    </div>
-                    <span className="text-secondary font-medium">
-                      +{checkIn.points} points
-                    </span>
-                  </div>
-                ))
+          {/* Edit Product Dialog */}
+          <Dialog open={!!editingProduct} onOpenChange={() => setEditingProduct(null)}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Edit Product</DialogTitle>
+              </DialogHeader>
+              {editingProduct && (
+                <ProductForm
+                  onSubmit={handleUpdateProduct}
+                  initialProduct={editingProduct}
+                  availableBooths={availableBooths}
+                />
               )}
-            </div>
-          </div>
+            </DialogContent>
+          </Dialog>
         </motion.div>
-
-        {/* Edit Product Dialog */}
-        <Dialog open={!!editingProduct} onOpenChange={() => setEditingProduct(null)}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit Product</DialogTitle>
-            </DialogHeader>
-            {editingProduct && (
-              <ProductForm
-                onSubmit={handleUpdateProduct}
-                initialProduct={editingProduct}
-                availableLocations={availableLocations}
-              />
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );
