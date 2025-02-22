@@ -33,13 +33,13 @@ const Index = () => {
             title="Store Owner"
             description="Manage your store layout, track inventory, and analyze sales performance"
             icon={<Store className="w-6 h-6" />}
-            onClick={() => navigate("/owner")}
+            onClick={() => navigate("/login")}
           />
           <RoleCard
             title="Shopper"
             description="Create shopping lists, find products easily, and get optimized routes"
             icon={<ShoppingCart className="w-6 h-6" />}
-            onClick={() => navigate("/shopper")}
+            onClick={() => navigate("/login")}
           />
         </motion.div>
       </div>
