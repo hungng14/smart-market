@@ -16,7 +16,7 @@ export const stores: Store[] = [
         category: "Fruits",
         price: 2.99,
         inStock: true,
-        location: "A1"
+        booth: "A1"
       },
       {
         id: "2",
@@ -24,7 +24,7 @@ export const stores: Store[] = [
         category: "Bakery",
         price: 3.49,
         inStock: true,
-        location: "B3"
+        booth: "B3"
       },
       {
         id: "3",
@@ -32,7 +32,7 @@ export const stores: Store[] = [
         category: "Dairy",
         price: 2.49,
         inStock: true,
-        location: "C2"
+        booth: "C2"
       }
     ]
   },
@@ -50,7 +50,7 @@ export const stores: Store[] = [
         category: "Meat",
         price: 7.99,
         inStock: true,
-        location: "D1"
+        booth: "D1"
       },
       {
         id: "5",
@@ -58,7 +58,7 @@ export const stores: Store[] = [
         category: "Grains",
         price: 12.99,
         inStock: true,
-        location: "E4"
+        booth: "E4"
       },
       {
         id: "6",
@@ -66,7 +66,7 @@ export const stores: Store[] = [
         category: "Vegetables",
         price: 1.99,
         inStock: true,
-        location: "A2"
+        booth: "A2"
       }
     ]
   }

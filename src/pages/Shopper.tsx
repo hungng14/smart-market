@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen, CheckSquare, DollarSign } from "lucide-react";
@@ -79,8 +80,8 @@ const Shopper = () => {
     return selectedStore.products
       .filter(p => products.includes(p.id))
       .sort((a, b) => {
-        const [aAisle, aPos] = a.location.split('');
-        const [bAisle, bPos] = b.location.split('');
+        const [aAisle, aPos] = a.booth.split('');
+        const [bAisle, bPos] = b.booth.split('');
         return aAisle.localeCompare(bAisle) || aPos.localeCompare(bPos);
       });
   };
@@ -228,7 +229,7 @@ const Shopper = () => {
                     <div>
                       <h3 className="font-medium">{product.name}</h3>
                       <p className="text-sm text-gray-600">
-                        Location: {product.location}
+                        Booth: {product.booth}
                       </p>
                     </div>
                     <div className="text-right">
@@ -269,7 +270,7 @@ const Shopper = () => {
                   ["E1", "E2", "E3", "E4"],
                 ].flat().map((cell) => {
                   const product = selectedStore.products.find(
-                    (p) => p.location === cell
+                    (p) => p.booth === cell
                   );
                   const isSelected = product && selectedProducts.includes(product.id);
                   return (
@@ -335,14 +336,14 @@ const Shopper = () => {
                             <div>
                               <h3 className="font-medium">{product.name}</h3>
                               <p className="text-sm text-gray-600">
-                                Location: {product.location}
+                                Booth: {product.booth}
                               </p>
                             </div>
                           </div>
                           <p className="text-sm text-gray-600 mt-2">
                             {index === 0 
-                              ? `From the entrance, go to aisle ${product.location[0]} and find position ${product.location[1]}.`
-                              : `From ${optimizedRoute[index - 1].location}, move to aisle ${product.location[0]} position ${product.location[1]}.`
+                              ? `From the entrance, go to aisle ${product.booth[0]} and find position ${product.booth[1]}.`
+                              : `From ${optimizedRoute[index - 1].booth}, move to aisle ${product.booth[0]} position ${product.booth[1]}.`
                             }
                           </p>
                         </div>
@@ -374,10 +375,10 @@ const Shopper = () => {
                         ["E1", "E2", "E3", "E4"],
                       ].flat().map((cell) => {
                         const product = selectedStore.products.find(
-                          (p) => p.location === cell
+                          (p) => p.booth === cell
                         );
                         const isSelected = product && selectedProducts.includes(product.id);
-                        const routeIndex = optimizedRoute.findIndex(p => p.location === cell);
+                        const routeIndex = optimizedRoute.findIndex(p => p.booth === cell);
                         return (
                           <div
                             key={cell}
