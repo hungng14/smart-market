@@ -26,8 +26,8 @@ const StoreSelection = () => {
 
   const fetchOwnerStores = async () => {
     try {
-      const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-      const userId = userData.id;
+      const ownerData = JSON.parse(localStorage.getItem("ownerData") || "{}");
+      const userId = ownerData.id;
       if (!userId) {
         toast.error("User not logged in");
         navigate("/login");
@@ -63,13 +63,13 @@ const [newStore, setNewStore] = useState({
 
 const handleCreateStore = async () => {
   try {
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const ownerData = JSON.parse(localStorage.getItem('ownerData') || '{}');
     const { data, error } = await supabase
       .from('store')
       .insert([
         {
           ...newStore,
-          owner_id: userData.id
+          owner_id: ownerData.id
         }
       ])
       .select()

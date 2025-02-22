@@ -34,7 +34,12 @@ export const useAuth = () => {
 
       // Save user data to localStorage
       const { id, email: userEmail, role, first_name, last_name } = userData;
-      localStorage.setItem('userData', JSON.stringify({ id, email: userEmail, role, first_name, last_name }));
+      if(role.toLowerCase() === "owner") {
+        localStorage.setItem('ownerData', JSON.stringify({ id, email: userEmail, role, first_name, last_name }));
+      } else {
+        localStorage.setItem('userData', JSON.stringify({ id, email: userEmail, role, first_name, last_name }));
+      }
+      
       setUserId(id);
       toast.success("Logged in successfully!");
       navigate(role.toLowerCase() === "owner" ? "/owner/stores" : "/shopper");
