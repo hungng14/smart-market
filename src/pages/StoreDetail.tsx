@@ -1,8 +1,7 @@
-
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen, CheckSquare, DollarSign } from "lucide-react";
+import { motion } from "framer-motion";
+import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen, CheckSquare, DollarSign, Search, Mic } from "lucide-react";
 import { Store } from "@/types/store";
 import { stores } from "@/data/stores";
 import { ShopperHeader } from "@/components/ShopperHeader";
@@ -15,6 +14,8 @@ interface PurchasedProduct {
   checked: boolean;
 }
 
+const PRODUCTS_PER_PAGE = 10;
+
 const StoreDetail = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
@@ -22,6 +23,12 @@ const StoreDetail = () => {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [purchasedProducts, setPurchasedProducts] = useState<PurchasedProduct[]>([]);
   const [showChecklist, setShowChecklist] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastProductRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const store = stores.find(s => s.id === storeId);
@@ -31,6 +38,63 @@ const StoreDetail = () => {
       navigate('/shopper');
     }
   }, [storeId, navigate]);
+
+  useEffect(() => {
+    if (!selectedStore) return;
+    setHasMore(page * PRODUCTS_PER_PAGE < selectedStore.products.length);
+  }, [page, selectedStore]);
+
+  const filteredProducts = selectedStore?.products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.booth.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
+  const displayedProducts = filteredProducts.slice(0, page * PRODUCTS_PER_PAGE);
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prev => prev + 1);
+      }
+    });
+
+    if (lastProductRef.current) {
+      observer.current.observe(lastProductRef.current);
+    }
+
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [hasMore, filteredProducts]);
+
+  const startVoiceSearch = () => {
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new (window as any).webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setSearchQuery(transcript);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.start();
+    } else {
+      alert('Voice search is not supported in this browser.');
+    }
+  };
 
   const handleBack = () => {
     if (showChecklist) {
@@ -50,7 +114,7 @@ const StoreDetail = () => {
 
   const handleCheckout = () => {
     if (!selectedStore || selectedProducts.length === 0) return;
-    
+
     const newPurchasedProducts = selectedProducts.map(id => {
       const product = selectedStore.products.find(p => p.id === id);
       if (!product) return null;
@@ -195,12 +259,33 @@ const StoreDetail = () => {
             <div className="bg-surface rounded-xl p-6 shadow-sm">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                 <List className="w-5 h-5 text-secondary" />
-                Products at {selectedStore.name}
+                Products at {selectedStore?.name}
               </h2>
-              <div className="space-y-4">
-                {selectedStore.products.map((product) => (
+
+              <div className="flex gap-2 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products or booth..."
+                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary"
+                  />
+                </div>
+                <button
+                  onClick={startVoiceSearch}
+                  className={`p-2 rounded-lg ${isListening ? 'bg-secondary text-white' : 'bg-gray-100 text-gray-600'} hover:bg-secondary hover:text-white transition-colors`}
+                >
+                  <Mic className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                {displayedProducts.map((product, index) => (
                   <div
                     key={product.id}
+                    ref={index === displayedProducts.length - 1 ? lastProductRef : null}
                     className={`bg-gray-50 rounded-lg p-4 flex justify-between items-center cursor-pointer ${
                       selectedProducts.includes(product.id)
                         ? "ring-2 ring-secondary"
@@ -228,6 +313,11 @@ const StoreDetail = () => {
                     </div>
                   </div>
                 ))}
+                {hasMore && (
+                  <div className="text-center py-4">
+                    <span className="text-gray-500">Loading more products...</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -262,8 +352,8 @@ const StoreDetail = () => {
                         isSelected
                           ? "bg-secondary border-secondary"
                           : product
-                          ? "bg-secondary/10 border-secondary"
-                          : "bg-gray-50 border-gray-200"
+                            ? "bg-secondary/10 border-secondary"
+                            : "bg-gray-50 border-gray-200"
                       }`}
                     >
                       <div className="font-medium">{cell}</div>
@@ -323,7 +413,7 @@ const StoreDetail = () => {
                             </div>
                           </div>
                           <p className="text-sm text-gray-600 mt-2">
-                            {index === 0 
+                            {index === 0
                               ? `From the entrance, go to aisle ${product.booth[0]} and find position ${product.booth[1]}.`
                               : `From ${optimizedRoute[index - 1].booth}, move to aisle ${product.booth[0]} position ${product.booth[1]}.`
                             }
@@ -337,7 +427,7 @@ const StoreDetail = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div>
                     <p className="text-gray-600 font-medium mb-4">
                       Route Map:
@@ -368,8 +458,8 @@ const StoreDetail = () => {
                               isSelected
                                 ? "bg-secondary border-secondary"
                                 : product
-                                ? "bg-secondary/10 border-secondary"
-                                : "bg-gray-50 border-gray-200"
+                                  ? "bg-secondary/10 border-secondary"
+                                  : "bg-gray-50 border-gray-200"
                             }`}
                           >
                             <div className="font-medium">{cell}</div>
