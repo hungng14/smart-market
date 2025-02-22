@@ -20,13 +20,21 @@ export const useAuth = () => {
             last_name: lastName,
             role: role,
           },
-          emailRedirectTo: undefined
         },
       });
 
       if (error) throw error;
-      toast.success('Signup successful! Please check your email for verification.');
-      navigate('/login');
+      
+      // Attempt to sign in immediately after signup
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (signInError) throw signInError;
+      
+      toast.success('Signup successful! You are now logged in.');
+      navigate(role === 'OWNER' ? '/owner' : '/shopper');
     } catch (error: any) {
       toast.error(error.message);
     } finally {
