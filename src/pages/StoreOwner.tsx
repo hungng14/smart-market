@@ -19,13 +19,14 @@ import {
 } from "@/components/ui/dialog";
 import { ProductForm } from "@/components/ProductForm";
 import { Product } from "@/types/store";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 const StoreOwner = () => {
-  // For demo purposes, we'll use the first store
   const store = stores[0];
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   // Mock data - replace with real data later
   const mockCheckIns: CheckIn[] = [];
@@ -40,19 +41,57 @@ const StoreOwner = () => {
 
   const availableLocations = gridCells.flat();
 
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*');
+    
+    if (error) {
+      toast.error('Failed to fetch products');
+      return;
+    }
+
+    setProducts(data || []);
+  };
+
   const getProductForLocation = (location: string) => {
-    return store.products.find((product) => product.location === location);
+    return products.find((product) => product.location === location);
   };
 
   const handleAddProduct = async (product: Omit<Product, "id">) => {
-    // This will be replaced with Supabase integration
-    console.log("Adding product:", product);
+    const { data, error } = await supabase
+      .from('products')
+      .insert([product])
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    setProducts([...products, data]);
     setShowAddProduct(false);
   };
 
   const handleUpdateProduct = async (product: Omit<Product, "id">) => {
-    // This will be replaced with Supabase integration
-    console.log("Updating product:", product);
+    if (!editingProduct) return;
+
+    const { error } = await supabase
+      .from('products')
+      .update(product)
+      .eq('id', editingProduct.id);
+
+    if (error) {
+      throw error;
+    }
+
+    setProducts(products.map(p => 
+      p.id === editingProduct.id ? { ...product, id: editingProduct.id } : p
+    ));
     setEditingProduct(null);
   };
 
@@ -98,16 +137,18 @@ const StoreOwner = () => {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <PackageSearch className="w-5 h-5 text-secondary" />
-                Products ({store.products.length})
+                Products ({products.length})
               </h2>
               <Dialog open={showAddProduct} onOpenChange={setShowAddProduct}>
                 <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button
+                    className="bg-secondary hover:bg-secondary/90 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
                     Add Product
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
                   </DialogHeader>
@@ -120,7 +161,7 @@ const StoreOwner = () => {
             </div>
 
             <div className="space-y-4">
-              {store.products.map((product) => (
+              {products.map((product) => (
                 <div
                   key={product.id}
                   className="bg-gray-50 rounded-lg p-4 flex justify-between items-center hover:bg-gray-100 transition-colors cursor-pointer"
@@ -205,7 +246,7 @@ const StoreOwner = () => {
 
         {/* Edit Product Dialog */}
         <Dialog open={!!editingProduct} onOpenChange={() => setEditingProduct(null)}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Edit Product</DialogTitle>
             </DialogHeader>
