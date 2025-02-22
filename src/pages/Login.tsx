@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { users } from "@/data/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -18,15 +18,14 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
+      const user = users.find(u => u.email === email && u.password === password);
       
+      if (!user) {
+        throw new Error("Invalid credentials");
+      }
+
       toast.success("Logged in successfully!");
-      navigate("/owner");
+      navigate(user.role === "owner" ? "/owner" : "/shopper");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
