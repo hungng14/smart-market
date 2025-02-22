@@ -1,7 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { List, Map, Navigation, ArrowLeft, MapPin, DoorOpen, CheckSquare, DollarSign, Search, Mic } from "lucide-react";
+import {
+  List,
+  Map,
+  Navigation,
+  ArrowLeft,
+  MapPin,
+  DoorOpen,
+  CheckSquare,
+  DollarSign,
+  Search,
+  Mic,
+} from "lucide-react";
 import { Store } from "@/types/store";
 import { stores } from "@/data/stores";
 import { ShopperHeader } from "@/components/ShopperHeader";
@@ -21,7 +32,9 @@ const StoreDetail = () => {
   const navigate = useNavigate();
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [purchasedProducts, setPurchasedProducts] = useState<PurchasedProduct[]>([]);
+  const [purchasedProducts, setPurchasedProducts] = useState<
+    PurchasedProduct[]
+  >([]);
   const [showChecklist, setShowChecklist] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -31,11 +44,11 @@ const StoreDetail = () => {
   const lastProductRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const store = stores.find(s => s.id === storeId);
+    const store = stores.find((s) => s.id === storeId);
     if (store) {
       setSelectedStore(store);
     } else {
-      navigate('/shopper');
+      navigate("/shopper");
     }
   }, [storeId, navigate]);
 
@@ -44,19 +57,21 @@ const StoreDetail = () => {
     setHasMore(page * PRODUCTS_PER_PAGE < selectedStore.products.length);
   }, [page, selectedStore]);
 
-  const filteredProducts = selectedStore?.products.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.booth.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredProducts =
+    selectedStore?.products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.booth.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) || [];
 
   const displayedProducts = filteredProducts.slice(0, page * PRODUCTS_PER_PAGE);
 
   useEffect(() => {
     if (!hasMore) return;
 
-    observer.current = new IntersectionObserver(entries => {
+    observer.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore) {
-        setPage(prev => prev + 1);
+        setPage((prev) => prev + 1);
       }
     });
 
@@ -72,7 +87,7 @@ const StoreDetail = () => {
   }, [hasMore, filteredProducts]);
 
   const startVoiceSearch = () => {
-    if ('webkitSpeechRecognition' in window) {
+    if ("webkitSpeechRecognition" in window) {
       const recognition = new (window as any).webkitSpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = false;
@@ -92,7 +107,7 @@ const StoreDetail = () => {
 
       recognition.start();
     } else {
-      alert('Voice search is not supported in this browser.');
+      alert("Voice search is not supported in this browser.");
     }
   };
 
@@ -100,54 +115,58 @@ const StoreDetail = () => {
     if (showChecklist) {
       setShowChecklist(false);
     } else {
-      navigate('/shopper');
+      navigate("/shopper");
     }
   };
 
   const handleProductToggle = (productId: string) => {
-    setSelectedProducts(prev =>
+    setSelectedProducts((prev) =>
       prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId],
     );
   };
 
   const handleCheckout = () => {
     if (!selectedStore || selectedProducts.length === 0) return;
 
-    const newPurchasedProducts = selectedProducts.map(id => {
-      const product = selectedStore.products.find(p => p.id === id);
-      if (!product) return null;
-      return {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        checked: false,
-      };
-    }).filter((p): p is PurchasedProduct => p !== null);
+    const newPurchasedProducts = selectedProducts
+      .map((id) => {
+        const product = selectedStore.products.find((p) => p.id === id);
+        if (!product) return null;
+        return {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          checked: false,
+        };
+      })
+      .filter((p): p is PurchasedProduct => p !== null);
 
-    setPurchasedProducts(prev => [...prev, ...newPurchasedProducts]);
+    setPurchasedProducts((prev) => [...prev, ...newPurchasedProducts]);
     setShowChecklist(true);
-    toast.success("Checkout successful! Your items have been added to the checklist.");
+    toast.success(
+      "Checkout successful! Your items have been added to the checklist.",
+    );
   };
 
   const handleToggleChecked = (productId: string) => {
-    setPurchasedProducts(prev =>
-      prev.map(product =>
+    setPurchasedProducts((prev) =>
+      prev.map((product) =>
         product.id === productId
           ? { ...product, checked: !product.checked }
-          : product
-      )
+          : product,
+      ),
     );
   };
 
   const getOptimizedRoute = (products: string[]) => {
     if (!selectedStore) return [];
     return selectedStore.products
-      .filter(p => products.includes(p.id))
+      .filter((p) => products.includes(p.id))
       .sort((a, b) => {
-        const [aAisle, aPos] = a.booth.split('');
-        const [bAisle, bPos] = b.booth.split('');
+        const [aAisle, aPos] = a.booth.split("");
+        const [bAisle, bPos] = b.booth.split("");
         return aAisle.localeCompare(bAisle) || aPos.localeCompare(bPos);
       });
   };
@@ -190,14 +209,22 @@ const StoreDetail = () => {
                       onClick={() => handleToggleChecked(product.id)}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center ${
-                          product.checked ? "bg-secondary border-secondary" : "border-gray-300"
-                        }`}>
+                        <div
+                          className={`w-5 h-5 rounded border flex items-center justify-center ${
+                            product.checked
+                              ? "bg-secondary border-secondary"
+                              : "border-gray-300"
+                          }`}
+                        >
                           {product.checked && (
                             <CheckSquare className="w-4 h-4 text-white" />
                           )}
                         </div>
-                        <span className={product.checked ? "line-through text-gray-500" : ""}>
+                        <span
+                          className={
+                            product.checked ? "line-through text-gray-500" : ""
+                          }
+                        >
                           {product.name}
                         </span>
                       </div>
@@ -217,13 +244,17 @@ const StoreDetail = () => {
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-gray-600">Total Spent</span>
                       <span className="font-semibold text-xl">
-                        ${purchasedProducts.reduce((sum, p) => sum + p.price, 0).toFixed(2)}
+                        $
+                        {purchasedProducts
+                          .reduce((sum, p) => sum + p.price, 0)
+                          .toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Remaining Items</span>
                       <span className="font-medium">
-                        {purchasedProducts.filter(p => !p.checked).length} items
+                        {purchasedProducts.filter((p) => !p.checked).length}{" "}
+                        items
                       </span>
                     </div>
                   </div>
@@ -276,7 +307,7 @@ const StoreDetail = () => {
                   </div>
                   <button
                     onClick={startVoiceSearch}
-                    className={`p-3 rounded-lg ${isListening ? 'bg-secondary text-white' : 'bg-gray-100 text-gray-600'} hover:bg-secondary hover:text-white transition-colors shadow-sm`}
+                    className={`p-3 rounded-lg ${isListening ? "bg-secondary text-white" : "bg-gray-100 text-gray-600"} hover:bg-secondary hover:text-white transition-colors shadow-sm`}
                   >
                     <Mic className="w-5 h-5" />
                   </button>
@@ -287,7 +318,11 @@ const StoreDetail = () => {
                 {displayedProducts.map((product, index) => (
                   <div
                     key={product.id}
-                    ref={index === displayedProducts.length - 1 ? lastProductRef : null}
+                    ref={
+                      index === displayedProducts.length - 1
+                        ? lastProductRef
+                        : null
+                    }
                     className={`bg-gray-50 rounded-lg p-4 flex justify-between items-center cursor-pointer ${
                       selectedProducts.includes(product.id)
                         ? "ring-2 ring-secondary"
@@ -305,9 +340,7 @@ const StoreDetail = () => {
                       <p className="font-semibold">${product.price}</p>
                       <span
                         className={`text-sm ${
-                          product.inStock
-                            ? "text-green-600"
-                            : "text-red-600"
+                          product.inStock ? "text-green-600" : "text-red-600"
                         }`}
                       >
                         {product.inStock ? "In Stock" : "Out of Stock"}
@@ -317,7 +350,9 @@ const StoreDetail = () => {
                 ))}
                 {hasMore && (
                   <div className="text-center py-4">
-                    <span className="text-gray-500">Loading more products...</span>
+                    <span className="text-gray-500">
+                      Loading more products...
+                    </span>
                   </div>
                 )}
               </div>
@@ -342,31 +377,34 @@ const StoreDetail = () => {
                   ["C1", "C2", "C3", "C4"],
                   ["D1", "D2", "D3", "D4"],
                   ["E1", "E2", "E3", "E4"],
-                ].flat().map((cell) => {
-                  const product = selectedStore.products.find(
-                    (p) => p.booth === cell
-                  );
-                  const isSelected = product && selectedProducts.includes(product.id);
-                  return (
-                    <div
-                      key={cell}
-                      className={`border rounded-lg p-2 text-sm ${
-                        isSelected
-                          ? "bg-secondary border-secondary"
-                          : product
-                            ? "bg-secondary/10 border-secondary"
-                            : "bg-gray-50 border-gray-200"
-                      }`}
-                    >
-                      <div className="font-medium">{cell}</div>
-                      {product && (
-                        <div className="text-xs text-gray-600 truncate">
-                          {product.name}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                ]
+                  .flat()
+                  .map((cell) => {
+                    const product = selectedStore.products.find(
+                      (p) => p.booth === cell,
+                    );
+                    const isSelected =
+                      product && selectedProducts.includes(product.id);
+                    return (
+                      <div
+                        key={cell}
+                        className={`border rounded-lg p-2 text-sm ${
+                          isSelected
+                            ? "bg-secondary border-secondary"
+                            : product
+                              ? "bg-secondary/10 border-secondary"
+                              : "bg-gray-50 border-gray-200"
+                        }`}
+                      >
+                        <div className="font-medium">{cell}</div>
+                        {product && (
+                          <div className="text-xs text-gray-600 truncate">
+                            {product.name}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             </div>
 
@@ -417,8 +455,7 @@ const StoreDetail = () => {
                           <p className="text-sm text-gray-600 mt-2">
                             {index === 0
                               ? `From the entrance, go to aisle ${product.booth[0]} and find position ${product.booth[1]}.`
-                              : `From ${optimizedRoute[index - 1].booth}, move to aisle ${product.booth[0]} position ${product.booth[1]}.`
-                            }
+                              : `From ${optimizedRoute[index - 1].booth}, move to aisle ${product.booth[0]} position ${product.booth[1]}.`}
                           </p>
                         </div>
                       ))}
@@ -431,9 +468,7 @@ const StoreDetail = () => {
                   </div>
 
                   <div>
-                    <p className="text-gray-600 font-medium mb-4">
-                      Route Map:
-                    </p>
+                    <p className="text-gray-600 font-medium mb-4">Route Map:</p>
                     <div className="grid grid-cols-4 gap-2 aspect-square relative">
                       <div className="absolute -left-8 top-0 flex items-center gap-1 text-secondary font-medium">
                         <DoorOpen className="w-5 h-5" />
@@ -447,32 +482,37 @@ const StoreDetail = () => {
                         ["C1", "C2", "C3", "C4"],
                         ["D1", "D2", "D3", "D4"],
                         ["E1", "E2", "E3", "E4"],
-                      ].flat().map((cell) => {
-                        const product = selectedStore.products.find(
-                          (p) => p.booth === cell
-                        );
-                        const isSelected = product && selectedProducts.includes(product.id);
-                        const routeIndex = optimizedRoute.findIndex(p => p.booth === cell);
-                        return (
-                          <div
-                            key={cell}
-                            className={`border rounded-lg p-2 text-sm ${
-                              isSelected
-                                ? "bg-secondary border-secondary"
-                                : product
-                                  ? "bg-secondary/10 border-secondary"
-                                  : "bg-gray-50 border-gray-200"
-                            }`}
-                          >
-                            <div className="font-medium">{cell}</div>
-                            {isSelected && (
-                              <div className="bg-white text-secondary w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">
-                                {routeIndex + 1}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                      ]
+                        .flat()
+                        .map((cell) => {
+                          const product = selectedStore.products.find(
+                            (p) => p.booth === cell,
+                          );
+                          const isSelected =
+                            product && selectedProducts.includes(product.id);
+                          const routeIndex = optimizedRoute.findIndex(
+                            (p) => p.booth === cell,
+                          );
+                          return (
+                            <div
+                              key={cell}
+                              className={`border rounded-lg p-2 text-sm ${
+                                isSelected
+                                  ? "bg-secondary border-secondary"
+                                  : product
+                                    ? "bg-secondary/10 border-secondary"
+                                    : "bg-gray-50 border-gray-200"
+                              }`}
+                            >
+                              <div className="font-medium">{cell}</div>
+                              {isSelected && (
+                                <div className="bg-white text-secondary w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">
+                                  {routeIndex + 1}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
                 </div>
