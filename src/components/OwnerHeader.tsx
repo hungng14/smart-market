@@ -1,17 +1,19 @@
-
 import { Store, History, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { Avatar, AvatarFallback } from "./ui/avatar";
 
 export const OwnerHeader = () => {
   const ownerData = JSON.parse(localStorage.getItem("ownerData") || "{}");
 
-  const getInitials = (name?: string) => {
-    if (!name) return "";
-    const parts = name.split(" ");
-    return parts.map(part => part[0]?.toUpperCase() || "").join("");
+  const getInitials = (ownerData?: {
+    first_name?: string;
+    last_name?: string;
+  }) => {
+    if (!ownerData?.first_name) return "";
+    const fN = ownerData?.first_name?.[0] || "";
+    const lN = ownerData?.last_name?.[0] || "";
+    return fN + lN;
   };
-  
+
   const location = useLocation();
 
   const menuItems = [
@@ -39,11 +41,9 @@ export const OwnerHeader = () => {
             </Link>
           ))}
           {ownerData?.first_name && (
-            <Avatar className="ml-auto">
-              <AvatarFallback className="bg-secondary text-white">
-                {getInitials(`${ownerData.first_name} ${ownerData.last_name}`)}
-              </AvatarFallback>
-            </Avatar>
+            <span className="ml-auto rounded-full w-10 h-10 block p-2 bg-gray-200">
+              {getInitials(ownerData)}
+            </span>
           )}
         </nav>
       </div>
