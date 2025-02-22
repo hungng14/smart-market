@@ -609,7 +609,7 @@ const StoreDetail = () => {
                     <div className="space-y-4">
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-sm text-gray-600 mb-2">
-                          Starting point: Main entrance (near A1)
+                          Starting point: Main entrance (near Counter 1, Position 1)
                         </p>
                       </div>
                       {Object.entries(
