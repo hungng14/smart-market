@@ -20,6 +20,7 @@ export const useAuth = () => {
             last_name: lastName,
             role: role,
           },
+          emailRedirectTo: undefined
         },
       });
 
@@ -39,6 +40,9 @@ export const useAuth = () => {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          emailRedirectTo: undefined
+        }
       });
 
       if (error) throw error;
