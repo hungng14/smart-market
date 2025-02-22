@@ -33,7 +33,7 @@ const mockCheckIns: CheckIn[] = [
     points: 50,
   },
 ];
-const mockUserPoints: UserPoints[] = stores.map(store => ({
+const mockUserPoints: UserPoints[] = stores.map((store) => ({
   storeId: store.id,
   points: 0,
 }));
@@ -62,7 +62,7 @@ const PointsManagement = () => {
               </h2>
               <div className="space-y-4">
                 {mockUserPoints.map((userPoints) => {
-                  const store = stores.find(s => s.id === userPoints.storeId);
+                  const store = stores.find((s) => s.id === userPoints.storeId);
                   return (
                     <div
                       key={userPoints.storeId}
@@ -85,7 +85,7 @@ const PointsManagement = () => {
               </h2>
               <div className="space-y-4">
                 {mockVouchers.map((voucher) => {
-                  const store = stores.find(s => s.id === voucher.storeId);
+                  const store = stores.find((s) => s.id === voucher.storeId);
                   return (
                     <div
                       key={voucher.id}
@@ -120,15 +120,15 @@ const PointsManagement = () => {
             </h2>
             <div className="space-y-4">
               {mockCheckIns.map((checkIn) => {
-                const store = stores.find(s => s.id === checkIn.storeId);
+                const store = stores.find((s) => s.id === checkIn.store_id);
                 return (
                   <div
                     key={checkIn.id}
                     className="bg-gray-50 rounded-lg p-4 flex justify-between items-center"
                   >
                     <div>
-                      <Link 
-                        to={`/shopper?store=${store?.id}`} 
+                      <Link
+                        to={`/shopper/store/${store?.id}`}
                         className="font-medium hover:text-secondary transition-colors"
                       >
                         {store?.name}
