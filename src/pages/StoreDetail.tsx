@@ -529,7 +529,23 @@ const StoreDetail = () => {
               </div>
 
               <div className="space-y-4 max-h-[600px] overflow-y-auto px-2 py-2">
-                {displayedProducts.map((product, index) => (
+                {loading ? (
+                  <div className="space-y-4">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="bg-gray-50 rounded-lg p-4 flex gap-4 items-center animate-pulse">
+                        <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                        </div>
+                        <div className="w-16">
+                          <div className="h-4 bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  displayedProducts.map((product, index) => (
                   <div
                     key={product.id}
                     ref={
@@ -565,8 +581,8 @@ const StoreDetail = () => {
                       </div>
                     </div>
                   </div>
-                ))}
-                {hasMore && (
+                )))}
+                {!loading && hasMore && (
                   <div className="text-center py-4">
                     <span className="text-gray-500">
                       Loading more products...
