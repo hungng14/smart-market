@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import ReactMarkdown from 'react-markdown';
 import { Calendar, MessagesSquare, BrainCircuit } from "lucide-react";
 import { ShopperHeader } from "@/components/ShopperHeader";
 import { Pie } from "react-chartjs-2";
@@ -301,9 +302,9 @@ const ProductHistory = () => {
               ) : aiResponse ? (
                 <div className="prose prose-sm max-w-none">
                   <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <p className="text-gray-800 whitespace-pre-line leading-relaxed">
+                    <ReactMarkdown className="text-gray-800 leading-relaxed">
                       {aiResponse}
-                    </p>
+                    </ReactMarkdown>
                   </div>
                 </div>
               ) : (
