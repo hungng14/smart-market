@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Calendar, MessagesSquare, BrainCircuit } from "lucide-react";
@@ -73,7 +74,6 @@ const ProductHistory = () => {
     try {
       setIsAnalyzing(true);
 
-      // Get order history data
       const { data: orderHistory, error } = await supabase
         .from("order_history")
         .select("*")
@@ -84,7 +84,6 @@ const ProductHistory = () => {
         return toast.error("Failed to analyze shopping habits");
       }
 
-      // Create product list from order history
       const productsList = orderHistory
         .map((order) =>
           order.items.map(
@@ -94,13 +93,11 @@ const ProductHistory = () => {
         .flat()
         .join("\n");
 
-      // Create prompt based on analysis type
       const prompt =
         type === "week"
           ? `Based on this customer's recent purchases:\n${productsList}\n\nAnalyze their weekly shopping patterns and provide personalized recommendations for their next shopping trip. Consider factors like product categories, frequency of purchases, and potential complementary items.`
           : `Given this customer's purchase history:\n${productsList}\n\nAnalyze their shopping habits and provide insights on: 1) Most frequently bought items 2) Shopping patterns 3) Suggestions for better shopping habits 4) Potential ways to optimize their shopping experience.`;
 
-      // Call Gemini AI
       const GEMINI_API_KEY = "AIzaSyC6lR0x5BhzEL6b0AGjqY6n9v5w90cVDNc";
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -166,9 +163,9 @@ const ProductHistory = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-7xl mx-auto"
+          className="max-w-7xl mx-auto space-y-6"
         >
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">
               Purchase History
             </h1>
@@ -183,112 +180,47 @@ const ProductHistory = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">
-                  Top 10 Purchased Products
-                </h2>
-                <div className="aspect-square">
-                  <Pie
-                    data={chartData}
-                    options={{ maintainAspectRatio: true }}
-                  />
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">
-                  Shopping Assistant
-                </h2>
-                <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => handleAnalyzeHabits("week")}
-                      disabled={isAnalyzing}
-                      className="flex-1 bg-secondary text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2"
-                    >
-                      {isAnalyzing ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Reviewing...
-                        </>
-                      ) : (
-                        <>
-                          <MessagesSquare className="w-5 h-5" />
-                          Review Weekly Products
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => handleAnalyzeHabits("habits")}
-                      disabled={isAnalyzing}
-                      className="flex-1 bg-secondary text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2"
-                    >
-                      {isAnalyzing ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Analyzing...
-                        </>
-                      ) : (
-                        <>
-                          <BrainCircuit className="w-5 h-5" />
-                          Analyze Habits
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    {isAnalyzing ? (
-                      <div className="text-center py-4">
-                        <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin mx-auto"></div>
-                        <p className="mt-2 text-gray-600">
-                          Analyzing your shopping patterns...
-                        </p>
-                        <p className="text-sm text-gray-500 mt-2">
-                          This might take a few seconds as we process your shopping history
-                        </p>
-                      </div>
-                    ) : aiResponse ? (
-                      <p className="text-gray-600 whitespace-pre-line">
-                        {aiResponse}
-                      </p>
-                    ) : (
-                      <div className="text-center">
-                        <BrainCircuit className="w-12 h-12 text-secondary mx-auto mb-3" />
-                        <h3 className="text-lg font-medium text-gray-800 mb-2">
-                          Shopping Assistant Ready
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          Click "Review Weekly Products" to get personalized recommendations for your next shopping trip, or "Analyze Habits" to understand your shopping patterns and receive optimization tips.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
+          {/* First Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left: Pie Chart */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">
+                Top 10 Purchased Products
+              </h2>
+              <div className="aspect-square">
+                <Pie data={chartData} options={{ maintainAspectRatio: true }} />
               </div>
             </div>
 
-            {/* Right Column */}
+            {/* Right: Total Spending & Purchase Details */}
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">Total Spending</h2>
-                <p className="text-3xl font-bold text-secondary">
-                  ${totalSpent.toFixed(2)}
-                </p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl font-bold text-secondary">
+                    ${totalSpent.toFixed(2)}
+                  </p>
+                  <p className="text-gray-500">lifetime total</p>
+                </div>
               </div>
 
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">Purchase Details</h2>
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                   {orderHistory.map((order) => (
-                    <div key={order.id} className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-600">
-                          {new Date(order.created_at).toLocaleDateString()}
+                    <div 
+                      key={order.id} 
+                      className="bg-gray-50 rounded-lg p-4 transition-all hover:bg-gray-100"
+                    >
+                      <div className="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
+                        <span className="text-gray-600 font-medium">
+                          {new Date(order.created_at).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
                         </span>
-                        <span className="font-semibold">
+                        <span className="font-semibold text-secondary">
                           ${order.total_money.toFixed(2)}
                         </span>
                       </div>
@@ -296,10 +228,10 @@ const ProductHistory = () => {
                         {order.items.map((item, index) => (
                           <div
                             key={index}
-                            className="flex justify-between text-sm"
+                            className="flex justify-between text-sm py-1"
                           >
-                            <span>{item.name}</span>
-                            <span>${item.price.toFixed(2)}</span>
+                            <span className="text-gray-700">{item.name}</span>
+                            <span className="text-gray-900">${item.price.toFixed(2)}</span>
                           </div>
                         ))}
                       </div>
@@ -307,6 +239,85 @@ const ProductHistory = () => {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Second Section */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <BrainCircuit className="w-6 h-6 text-secondary" />
+                Shopping Assistant
+              </h2>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleAnalyzeHabits("week")}
+                  disabled={isAnalyzing}
+                  className="bg-secondary/10 text-secondary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-secondary/20 transition-colors"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <MessagesSquare className="w-4 h-4" />
+                      Review Weekly Products
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => handleAnalyzeHabits("habits")}
+                  disabled={isAnalyzing}
+                  className="bg-secondary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-secondary/90 transition-colors"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <BrainCircuit className="w-4 h-4" />
+                      Analyze Habits
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-6">
+              {isAnalyzing ? (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <p className="mt-4 text-gray-800 font-medium">
+                    Analyzing your shopping patterns...
+                  </p>
+                  <p className="text-gray-500 mt-2">
+                    We're processing your shopping history to provide personalized insights
+                  </p>
+                </div>
+              ) : aiResponse ? (
+                <div className="prose prose-sm max-w-none">
+                  <div className="bg-white rounded-lg p-6 shadow-sm">
+                    <p className="text-gray-800 whitespace-pre-line leading-relaxed">
+                      {aiResponse}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <BrainCircuit className="w-16 h-16 text-secondary mx-auto mb-4" />
+                  <h3 className="text-xl font-medium text-gray-800 mb-3">
+                    Get Personalized Shopping Insights
+                  </h3>
+                  <p className="text-gray-600 max-w-2xl mx-auto">
+                    Use our AI-powered shopping assistant to analyze your purchase history.
+                    Get recommendations for your next shopping trip or understand your shopping patterns to make better decisions.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
