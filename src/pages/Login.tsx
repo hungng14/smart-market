@@ -50,7 +50,7 @@ const Login = () => {
           >
             Sign in
           </Button>
-        <div className="mt-4">
+          {/* <div className="mt-4">
           <Button 
             type="button" 
             variant="outline"
@@ -59,7 +59,7 @@ const Login = () => {
           >
             Continue as Shopper Guest
           </Button>
-        </div>
+        </div> */}
         </form>
 
         <div className="mt-4 text-center">
