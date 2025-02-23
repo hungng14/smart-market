@@ -209,34 +209,63 @@ const ProductHistory = () => {
                       disabled={isAnalyzing}
                       className="flex-1 bg-secondary text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2"
                     >
-                      <MessagesSquare className="w-5 h-5" />
-                      Review Weekly Products
+                      {isAnalyzing ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Reviewing...
+                        </>
+                      ) : (
+                        <>
+                          <MessagesSquare className="w-5 h-5" />
+                          Review Weekly Products
+                        </>
+                      )}
                     </button>
                     <button
                       onClick={() => handleAnalyzeHabits("habits")}
                       disabled={isAnalyzing}
                       className="flex-1 bg-secondary text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2"
                     >
-                      <BrainCircuit className="w-5 h-5" />
-                      Analyze Habits
+                      {isAnalyzing ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        <>
+                          <BrainCircuit className="w-5 h-5" />
+                          Analyze Habits
+                        </>
+                      )}
                     </button>
                   </div>
-                  {isAnalyzing ? (
-                    <div className="text-center py-4">
-                      <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin mx-auto"></div>
-                      <p className="mt-2 text-gray-600">
-                        Analyzing your shopping patterns...
-                      </p>
-                    </div>
-                  ) : (
-                    aiResponse && (
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-gray-600 whitespace-pre-line">
-                          {aiResponse}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    {isAnalyzing ? (
+                      <div className="text-center py-4">
+                        <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        <p className="mt-2 text-gray-600">
+                          Analyzing your shopping patterns...
+                        </p>
+                        <p className="text-sm text-gray-500 mt-2">
+                          This might take a few seconds as we process your shopping history
                         </p>
                       </div>
-                    )
-                  )}
+                    ) : aiResponse ? (
+                      <p className="text-gray-600 whitespace-pre-line">
+                        {aiResponse}
+                      </p>
+                    ) : (
+                      <div className="text-center">
+                        <BrainCircuit className="w-12 h-12 text-secondary mx-auto mb-3" />
+                        <h3 className="text-lg font-medium text-gray-800 mb-2">
+                          Shopping Assistant Ready
+                        </h3>
+                        <p className="text-gray-600 text-sm">
+                          Click "Review Weekly Products" to get personalized recommendations for your next shopping trip, or "Analyze Habits" to understand your shopping patterns and receive optimization tips.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
