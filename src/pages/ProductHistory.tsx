@@ -302,7 +302,7 @@ const ProductHistory = () => {
               ) : aiResponse ? (
                 <div className="prose prose-sm max-w-none">
                   <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <ReactMarkdown className="text-gray-800 leading-relaxed">
+                    <ReactMarkdown>
                       {aiResponse}
                     </ReactMarkdown>
                   </div>

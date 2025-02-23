@@ -7,7 +7,7 @@ channel = "stable-24_05"
 [deployment]
 run = ["sh", "-c", "npm run preview"]
 build = ["sh", "-c", "npm run build"]
-deploymentTarget = "cloudrun"
+deploymentTarget = "gce"
 
 [[ports]]
 localPort = 8080
