@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Calendar, MessagesSquare, BrainCircuit } from "lucide-react";
@@ -69,46 +68,45 @@ const ProductHistory = () => {
     setTopProducts(sortedProducts);
   };
 
-  const handleAnalyzeHabits = async (type) => {
-    setIsAnalyzing(true);
+  const handleAnalyzeHabits = async (type: 'week' | 'habits') => {
     try {
-      const GEMINI_API_KEY = "AIzaSyC6lR0x5BhzEL6b0AGjqY6n9v5w90cVDNc";
+      setIsAnalyzing(true);
+
+      // Get order history data
+      const { data: orderHistory, error } = await supabase
+        .from("order_history")
+        .select("*")
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Create product list from order history
+      const productsList = orderHistory
+        .map(order => order.items.map((item: any) => 
+          `${item.name} (Price: $${item.price})`
+        ))
+        .flat()
+        .join("\n");
+
+      // Create prompt based on analysis type
       const prompt = type === 'week' 
-        ? "Review my purchase history and suggest what products I might need this week based on my buying patterns:"
-        : "Analyze my buying habits and provide insights on my shopping behavior:";
+        ? `Based on this customer's recent purchases:\n${productsList}\n\nAnalyze their weekly shopping patterns and provide personalized recommendations for their next shopping trip. Consider factors like product categories, frequency of purchases, and potential complementary items.`
+        : `Given this customer's purchase history:\n${productsList}\n\nAnalyze their shopping habits and provide insights on: 1) Most frequently bought items 2) Shopping patterns 3) Suggestions for better shopping habits 4) Potential ways to optimize their shopping experience.`;
 
-      const purchaseData = orderHistory.map(order => {
-        return `Order on ${new Date(order.created_at).toLocaleDateString()}: ${order.items.map(item => item.name).join(', ')}`;
-      }).join('\n');
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `${prompt}\n\nPurchase History:\n${purchaseData}`,
-                  },
-                ],
-              },
-            ],
-          }),
-        }
-      );
+      // Call Gemini AI (using the same endpoint as recommend button)
+      const response = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
 
       if (!response.ok) throw new Error("Failed to get AI analysis");
+
       const data = await response.json();
-      setAiResponse(data.candidates[0]?.content?.parts?.[0]?.text || "No insights available.");
+      setAiResponse(data.response);
     } catch (error) {
       console.error("Error analyzing habits:", error);
       toast.error("Failed to analyze shopping habits");
-      setAiResponse("Failed to analyze shopping habits. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
