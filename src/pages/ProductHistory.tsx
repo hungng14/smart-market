@@ -8,6 +8,7 @@ import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { GEMINI_API_KEY } from "@/config/app";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -99,7 +100,6 @@ const ProductHistory = () => {
           ? `Based on this customer's recent purchases:\n${productsList}\n\nAnalyze their weekly shopping patterns and provide personalized recommendations for their next shopping trip. Consider factors like product categories, frequency of purchases, and potential complementary items.`
           : `Given this customer's purchase history:\n${productsList}\n\nAnalyze their shopping habits and provide insights on: 1) Most frequently bought items 2) Shopping patterns 3) Suggestions for better shopping habits 4) Potential ways to optimize their shopping experience.`;
 
-      const GEMINI_API_KEY = "AIzaSyC6lR0x5BhzEL6b0AGjqY6n9v5w90cVDNc";
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {

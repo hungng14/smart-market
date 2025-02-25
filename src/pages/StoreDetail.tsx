@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ShopperHeader } from "@/components/ShopperHeader";
 import { toast } from "sonner";
 import { booths } from "@/data/booths"; // Import booths data
+import { GEMINI_API_KEY } from "@/config/app";
 
 interface PurchasedProduct {
   id: string;
@@ -218,7 +219,6 @@ const StoreDetail = () => {
         period === "today" ? "today" : "this week"
       }. Only return the exact product names from the list, separated by commas.`;
 
-      const GEMINI_API_KEY = "AIzaSyC6lR0x5BhzEL6b0AGjqY6n9v5w90cVDNc";
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
